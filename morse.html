@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Morse Translator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+<script>
+// Objeto que almacena las equivalencias entre caracteres y código morse
+var diccionario = {
+ "A": ".-",
+ "B": "-...",
+ "C": "-.-.",
+ "D": "-..",
+ "E": ".",
+ "F": "..-.",
+ "G": "--.",
+ "H": "....",
+ "I": "..",
+ "J": ".---",
+ "K": "-.-",
+ "L": ".-..",
+ "M": "--",
+ "N": "-.",
+ "O": "---",
+ "P": ".--.",
+ "Q": "--.-",
+ "R": ".-.",
+ "S": "...",
+ "T": "-",
+ "U": "..-",
+ "V": "...-",
+ "W": ".--",
+ "X": "-..-",
+ "Y": "-.--",
+ "Z": "--..",
+ "0": "-----",
+ "1": ".----",
+ "2": "..---",
+ "3": "...--",
+ "4": "....-",
+ "5": ".....",
+ "6": "-....",
+ "7": "--...",
+ "8": "---..",
+ "9": "----.",
+ ".": ".-.-.-",
+ ",": "--..--",
+ "?": "..--..",
+ "!": "-.-.--",
+ "/": "-..-.",
+ "(": "-.--.",
+ ")": "-.--.-",
+ "&": ".-...",
+ ":": "---...",
+ ";": "-.-.-.",
+ "=": "-...-",
+ "+": ".-.-.",
+ "-": "-....-",
+ "_": "..--.-",
+ "\"": ".-..-.",
+ "$": "...-..-",
+ "@": ".--.-.",
+ " ": "/"
+};
+// Función que traduce una cadena de texto o de código morse
+function traducir(cadena) {
+ // Variable que almacena el resultado de la traducción
+ var resultado = "";
+ // Variable que indica si la cadena es texto o código morse
+ var esTexto = false;
+ // Comprobar si la cadena contiene algún carácter que no sea punto, guión o espacio
+ for (var i = 0; i < cadena.length; i++) {
+   if (cadena[i] != "." && cadena[i] != "-" && cadena[i] != " ") {
+     esTexto = true;
+     break;
+   }
+ }
+ // Si la cadena es texto, convertirla a código morse
+ if (esTexto) {
+   // Convertir la cadena a mayúsculas
+   cadena = cadena.toUpperCase();
+   // Recorrer cada carácter de la cadena
+   for (var i = 0; i < cadena.length; i++) {
+     // Obtener el código morse correspondiente al carácter
+     var codigo = diccionario[cadena[i]];
+     // Si el código existe, añadirlo al resultado seguido de un espacio
+     if (codigo) {
+       resultado += codigo + " ";
+     }
+   }
+ }
+ // Si la cadena es código morse, convertirla a texto
+ else {
+   // Dividir la cadena por espacios para obtener los códigos morse
+   var codigos = cadena.split(" ");
+   // Recorrer cada código morse
+   for (var i = 0; i < codigos.length; i++) {
+     // Buscar el carácter correspondiente al código morse
+     var caracter = Object.keys(diccionario).find(
+       (key) => diccionario[key] === codigos[i]
+     );
+     // Si el carácter existe, añadirlo al resultado
+     if (caracter) {
+       resultado += caracter;
+     }
+   }
+ }
+ // Devolver el resultado de la traducción
+ return resultado;
+}
+</script>
+</head>
+<body style="margin:5px;">
+<div style="top:50%; left:50%; width:95%; max-width:600px; transform:translate(-50%, -50%); position: absolute;">
+<h1 style="text-align:center; font-weight:700;">Traductor de código Morse</h1>
+<textarea id="entrada" rows="10" cols="50" placeholder="Introduce el texto o el código morse que quieras traducir y pulsa el botón..."></textarea>
+<button onclick="document.getElementById('salida').innerHTML = traducir(document.getElementById('entrada').value)" type="button" class="btn btn-primary"><i class="fa-solid fa-language"></i> Traducir</button>
+<button id="playBeep" style="height:50px;" class="btn btn-secondary"><i class="fa-solid fa-volume-high"></i> Reproducir sonido</button>
+
+<div id="salida"><i style="opacity:0.5;">Cuando escribas algo se representará aquí...</i></div>
+</div>
+
+<!-- Add this in your HTML where you want the button to appear -->
+
+<!-- Add these audio elements in your HTML -->
+<audio id="shortBeep" src="/short.mp3"></audio>
+<audio id="longBeep" src="/long.mp3"></audio>
+
+<script>
+    // Add this in your JavaScript
+    document.getElementById('playBeep').onclick = function() {
+    // Get the translated Morse code
+    var morseCode = document.getElementById('salida').innerHTML;
+    morseCode = morseCode.split('');
+
+    // Add this function in your JavaScript
+async function playSound(sound) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        sound.onended = resolve;
+        sound.play();          
+        }, 300);
+    });
+}
+
+document.getElementById('playBeep').onclick = async function() {
+    var morseCode = document.getElementById('salida').innerHTML;
+    morseCode = morseCode.split('');
+
+    for (var i = 0; i < morseCode.length; i++) {
+        if (morseCode[i] === '.') {
+            await playSound(document.getElementById('shortBeep'));
+        }
+        else if (morseCode[i] === '-') {
+            await playSound(document.getElementById('longBeep'));
+        }
+    }
+};
+};
+</script>
+
+<script src="https://kit.fontawesome.com/e47ece3e74.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+</html>
+
+<style>
+  textarea{
+    width:100%;
+    height:200px;
+    resize:none;
+    margin-top:10px;
+    padding:10px;
+    border:2px solid rgba(0, 0, 0, 0.311);
+    border-radius:8px;
+  }
+  button{
+    height:60px;
+    margin-top:8px;
+    width:100%;
+  }
+  #salida{
+    width:100%;
+    padding:20px;
+    margin-top:38px;
+    border:2px dashed rgba(0, 0, 0, 0.311);
+    border-radius:8px;
+  }
+</style>
